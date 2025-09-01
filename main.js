@@ -1,4 +1,5 @@
 import { intro } from './intro.js';
+import { portfolio } from './portfolio.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const screen = document.getElementById('screen');
@@ -73,8 +74,8 @@ function typeBlock(lines, lineDelay = 200, charDelay = 20, overlap = true) {
         "   ╱        _╱         ╱        _╱   /     /        _/        _/  ",
         "   ╲_______╱ ╲___╱____╱╲________╱╲________╱╲________╱╲____╱___╱   ",
         " _____________________________________________________________________",
-        "  Frédéric Gagnon-Girard              frederic.gagnongirard@gmail.com",
-        "  Montreal, Canada                                  github.com/faeder",
+        " Frédéric Gagnon-Girard ⛇        frederic.gagnongirard@gmail.com ⏍",
+        " Montréal, Canada ⚑                             github.com/faeder ⚛",
         " ---------------------------------------------------------------------",
         ])
 
@@ -84,9 +85,11 @@ function typeBlock(lines, lineDelay = 200, charDelay = 20, overlap = true) {
     const commands = {
         help()  { typeBlock([
             " ",
-            "Available commands: help, about, clear,"]); },
+            "Available commands: help, about, clear, portfolio"]); },
         about() {
             typeBlock([intro],200,0,true); },
+        portfolio() {
+            typeBlock([portfolio],200,0,true); },
         clear() { 
             screen.innerHTML = ""; 
             screen.scrollTop = 0;
