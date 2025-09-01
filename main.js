@@ -1,14 +1,22 @@
+import { intro } from './intro.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const screen = document.getElementById('screen');
     const form   = document.getElementById('cmdline');
     const input  = document.getElementById('input');
+
 
     function print(line = "") {
         screen.innerHTML += line + "\n";
         screen.scrollTop = screen.scrollHeight;
     }
 
-function typeBlock(lines, lineDelay = 100, charDelay = 10, overlap = true) {
+function typeBlock(lines, lineDelay = 200, charDelay = 20, overlap = true) {
+    // if a single string (like backtick paragraph) is passed, split into array
+    if (typeof lines === `string`) {
+        lines = lines.trim().split("\n");
+    }
+
     return new Promise((resolve) => {
         let lineIndex = 0;
 
@@ -43,14 +51,11 @@ function typeBlock(lines, lineDelay = 100, charDelay = 10, overlap = true) {
             lineDiv.style.transform = `rotateX(${lineIndex * 0.9}deg)`;
             lineDiv.style.transformOrigin = 'center top';
 
-
             const linePromise = typeLine(currentLine, lineDiv);
 
             if (overlap) {
-                // start next line after lineDelay ms even if this one isn't finished
                 setTimeout(nextLine, lineDelay);
             } else {
-                // wait for this line to finish then lineDelay
                 linePromise.then(() => setTimeout(nextLine, lineDelay));
             }
         }
@@ -59,30 +64,33 @@ function typeBlock(lines, lineDelay = 100, charDelay = 10, overlap = true) {
     });
 }
 
-
-
     function greeting() {
         typeBlock([
-        "______________________________________________________________",
-        "   ________  ________  ________   _______  ________  ________ ",
-        "  ╱        ╲╱        ╲╱        ╲_╱       ╲╱        ╲╱        ╲",
-        " ╱       __╱    _    ╱    _    ╱    _ /  ╱    _    ╱    _    ╱",
-        "╱        _╱         ╱        _╱   /     /        _/        _/ ",
-        "╲_______╱ ╲___╱____╱╲________╱╲________╱╲________╱╲____╱___╱  ",
-        "______________________________________________________________",
-        "frédéric gagnon-girard         frederic.gagnongirard@gmail.com",
-        new Date().toGMTString(),
-        ], 200, 20, true);
+        "______________________________________________________________________",
+        "      ________  ________  ________   _______  ________  ________  ",
+        "     ╱        ╲╱        ╲╱        ╲_╱       ╲╱        ╲╱        ╲ ",
+        "    ╱       __╱    _    ╱    _    ╱    _ /  ╱    _    ╱    _    ╱ ",
+        "   ╱        _╱         ╱        _╱   /     /        _/        _/  ",
+        "   ╲_______╱ ╲___╱____╱╲________╱╲________╱╲________╱╲____╱___╱   ",
+        " _____________________________________________________________________",
+        "  Frédéric Gagnon-Girard              frederic.gagnongirard@gmail.com",
+        "  Montreal, Canada                                  github.com/faeder",
+        " ---------------------------------------------------------------------",
+        ])
 
-        // for (let i = 0; i < 2; i++) {
-        //     print("\n")}
-        }
+    }
     
 
     const commands = {
-        help()  { typeBlock(["Available commands: help, about, clear, date"]); },
-        about() { typeBlock(["This is my interactive resume console."]); },
-        clear() { screen.innerHTML = ""; greeting(); },
+        help()  { typeBlock([
+            " ",
+            "Available commands: help, about, clear,"]); },
+        about() {
+            typeBlock([intro],200,0,true); },
+        clear() { 
+            screen.innerHTML = ""; 
+            screen.scrollTop = 0;
+            greeting();},
         date()  { typeBlock([new Date().toString()]); },
     };
 
@@ -103,3 +111,4 @@ function typeBlock(lines, lineDelay = 100, charDelay = 10, overlap = true) {
     // show greeting on page load
     greeting();
 });
+

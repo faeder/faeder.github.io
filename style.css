@@ -5,11 +5,16 @@
     box-sizing: border-box; /* Ensures padding and border are included in element's total width/height */
 }
 
+head {
+    font-family: 'Courier Prime', monospace;
+    font-size: 16px;
+}
+
 /* Body Styles */
 body {
     background-color: #1a1a1a; /* Sets a background color */
-    font-family: 'Fira Mono', monospace;
-    font-size: 16px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
     /* font: 13px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; Sets a default font */
     line-height: 1.4; /*Improves readability of text */
     color: #ad8f7e; /* Sets a default text color */
@@ -30,7 +35,7 @@ body {
 
 
 #console {
-    width: min(100px, 10%); 
+    width: min(100px, 100%); 
     
 }
     
@@ -38,7 +43,7 @@ body {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;  /* lets you type in input */
+    pointer-events: none;
     background: repeating-linear-gradient(
         1deg,
         rgba(255,255,255,0.02) 2,
@@ -49,11 +54,14 @@ body {
     z-index: 2;
 }
 
-#screen {
+#screen { 
     white-space: pre-wrap;
-    padding-left: 18px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 20px;
     width: 100%;
     overflow-y: auto;
+    overflow-x: hidden;        /* NEVER show horizontal scroll */
     height: 550px;
     background: #252525;
     animation: flicker 0.15s infinite;
@@ -61,7 +69,18 @@ body {
     perspective: 800px;
     transform: rotateX(1deg); /* slight tilt forward/back */
     transform-style: preserve-3d;
+    max-width: 75ch;
+    word-wrap: break-word;     /* break long words if needed */
+    overflow-wrap: break-word; /* modern word breaking */
+      /* hide scrollbar visually */
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE 10+ */
 
+
+}
+
+#screen::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari, Edge */
 }
 
 #screen div {
@@ -69,6 +88,11 @@ body {
     transform-origin: center;
     margin: 0;          /* remove default spacing */
     margin-bottom: 4px; /* adjust for fine control */
+    max-width: 75ch;
+    text-align: left;             /* classic CRT: left-aligned monospace */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 
@@ -78,7 +102,7 @@ body {
     align-items: center;
     gap: 8px;
     margin-top: 5px;
-    width: 100%;
+    width: 60%;
 }
 
 .prompt { 
