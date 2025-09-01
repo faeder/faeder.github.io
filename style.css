@@ -1,0 +1,100 @@
+/* Basic Reset/Normalization (optional but recommended) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Ensures padding and border are included in element's total width/height */
+}
+
+/* Body Styles */
+body {
+    background-color: #1a1a1a; /* Sets a background color */
+    font-family: 'Fira Mono', monospace;
+    font-size: 16px;
+    /* font: 13px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; Sets a default font */
+    line-height: 1.4; /*Improves readability of text */
+    color: #ad8f7e; /* Sets a default text color */
+    padding: 75px; /* Sets a margin from the left and the top (and probably the
+    right as well as the bottom */
+    align-items: flex-start;
+    justify-content: flex-start;
+    display: flex;
+    flex-direction: column;
+    letter-spacing: 0.95;
+}
+
+/* Console Styles */
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+    20%, 22%, 24%, 55% { opacity: 0.7; }
+}
+
+
+#console {
+    width: min(100px, 10%); 
+    
+}
+    
+#screen::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;  /* lets you type in input */
+    background: repeating-linear-gradient(
+        1deg,
+        rgba(255,255,255,0.02) 2,
+        rgba(255,255,255,0.02) 4px,
+        transparent 1px,
+        transparent 2px
+    );
+    z-index: 2;
+}
+
+#screen {
+    white-space: pre-wrap;
+    padding-left: 18px;
+    width: 100%;
+    overflow-y: auto;
+    height: 550px;
+    background: #252525;
+    animation: flicker 0.15s infinite;
+    text-shadow: 0 0 1px rgb(0, 99, 0), 0 0 3px rgb(182, 103, 0);
+    perspective: 800px;
+    transform: rotateX(1deg); /* slight tilt forward/back */
+    transform-style: preserve-3d;
+
+}
+
+#screen div {
+    transform: rotateX(1deg);
+    transform-origin: center;
+    margin: 0;          /* remove default spacing */
+    margin-bottom: 4px; /* adjust for fine control */
+}
+
+
+
+#cmdline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+    width: 100%;
+}
+
+.prompt { 
+    color: 0f0;
+}
+
+#input {
+    flex: 1;
+    background: transparent;
+    color: #ad8f7e;
+    border: none;
+    outline: none;  
+    font-family: inherit;
+    width: 100%;
+}
+
+#input::placeholder { color: #296b52;}
+
+
