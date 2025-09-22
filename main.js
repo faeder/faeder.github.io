@@ -2,20 +2,16 @@ import { intro } from './intro.js';
 import { portfolio0, portfolio1, portfolio1title, portfolio2, portfolio2title } from './portfolio1.js';
 import { greetingArt } from './greeting.js';
 
+let insideportfolio = false;
 
 document.addEventListener('DOMContentLoaded', () => {
     const screen = document.getElementById('screen');
     const form   = document.getElementById('cmdline');
     const input  = document.getElementById('input');
 
-    // ----- STATE -----
-    const state = {
-        mode: "root",   // "root" or "portfolio"
-        history: [],    // past commands
-        historyIndex: -1
-    };
-
-    // ----- HELPERS -----
+    // -------------------------
+    // UTILITIES
+    // -------------------------
     function print(line = "") {
         screen.innerHTML += line + "\n";
         screen.scrollTop = screen.scrollHeight;
@@ -72,130 +68,98 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-function greeting() {
-    typeBlock(greetingArt, 0, 20, true); 
-};
-
-
-    
+    function greeting() {
+        typeBlock(greetingArt, 0, 20, true);
+    }
 
     function invalidCommand(raw) {
         print("Unknown command: " + raw);
     }
 
-    // ----- COMMAND REGISTRY -----
+    // -------------------------
+    // DYNAMIC HELP
+    // -------------------------
+    function getAvailableCommands() {
+        const baseCommands = ["help", "about", "clear", "portfolio", "date"];
+        const portfolioCommands = ["1", "2"];
+        return insideportfolio ? baseCommands.concat(portfolioCommands) : baseCommands;
+    }
+
+    // -------------------------
+    // COMMANDS
+    // -------------------------
     const commands = {
-        help: {
-            description: "List available commands",
-            run: () => {
-                typeBlock([
-                    " ",
-                    "Available commands:",
-                    ...Object.keys(commands).map(cmd => `- ${cmd}: ${commands[cmd].description}`)
-                ]);
+        help() {
+            const available = getAvailableCommands();
+            typeBlock([
+                " ",
+                "Available commands: " + available.join(", ")
+            ]);
+        },
+
+        about() {
+            typeBlock([intro], 200, 0, true);
+        },
+
+        portfolio() {
+            insideportfolio = true;
+            typeBlock([
+                portfolio0.trim(),
+                " ",
+                portfolio1title.trim(),
+                portfolio2title.trim(),
+                " ",
+                "Type the entry number for which you want to have detail."
+            ], 200, 0, true);
+        },
+
+        "1"() {
+            if (!insideportfolio) {
+                invalidCommand("1");
+            } else {
+                typeBlock([portfolio1], 200, 0, true);
             }
         },
 
-        about: {
-            description: "Show about info",
-            run: () => typeBlock([intro], 200, 0, true)
-        },
-
-        portfolio: {
-            description: "View portfolio entries",
-            run: () => {
-                state.mode = "portfolio";
-                typeBlock([
-                    portfolio0.trim(),
-                    " ",
-                    portfolio1title.trim(),
-                    portfolio2title.trim(),
-                    " ",
-                    "Type 1 or 2 to see details, or 'clear' to reset."
-                ], 200, 0, true);
+        "2"() {
+            if (!insideportfolio) {
+                invalidCommand("2");
+            } else {
+                typeBlock([portfolio2], 200, 0, true);
             }
         },
 
-        "1": {
-            description: "Show portfolio entry 1 (only inside portfolio)",
-            run: () => {
-                if (state.mode !== "portfolio") {
-                    invalidCommand("1");
-                } else {
-                    typeBlock([portfolio1], 200, 0, true);
-                }
-            }
+        clear() {
+            insideportfolio = false; // reset state
+            screen.innerHTML = "";
+            screen.scrollTop = 0;
+            greeting();
         },
 
-        "2": {
-            description: "Show portfolio entry 2 (only inside portfolio)",
-            run: () => {
-                if (state.mode !== "portfolio") {
-                    invalidCommand("2");
-                } else {
-                    typeBlock([portfolio2], 200, 0, true);
-                }
-            }
-        },
-
-        clear: {
-            description: "Clear the screen",
-            run: () => {
-                screen.innerHTML = "";
-                screen.scrollTop = 0;
-                state.mode = "root";
-                greeting();
-            }
-        },
-
-        date: {
-            description: "Show current date",
-            run: () => typeBlock([new Date().toString()])
+        date() {
+            typeBlock([new Date().toString()]);
         }
     };
 
-    // ----- INPUT HANDLER -----
+    // -------------------------
+    // INPUT HANDLER
+    // -------------------------
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const raw = input.value;
         const cmd = raw.trim().toLowerCase();
         print("> " + raw);
 
-        // store history
-        if (raw.trim()) {
-            state.history.push(raw);
-            state.historyIndex = state.history.length; // reset to "after last"
-        }
-
-        if (commands[cmd]) {
-            commands[cmd].run();
+        if (cmd in commands) {
+            commands[cmd]();
         } else if (cmd.length) {
             invalidCommand(raw);
         }
-
         input.value = "";
     });
 
-    // ----- HISTORY NAVIGATION -----
-    input.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowUp") {
-            if (state.historyIndex > 0) {
-                state.historyIndex--;
-                input.value = state.history[state.historyIndex];
-            }
-            e.preventDefault();
-        } else if (e.key === "ArrowDown") {
-            if (state.historyIndex < state.history.length - 1) {
-                state.historyIndex++;
-                input.value = state.history[state.historyIndex];
-            } else {
-                state.historyIndex = state.history.length;
-                input.value = "";
-            }
-            e.preventDefault();
-        }
-    });
-
-    // ----- INIT -----
+    // -------------------------
+    // INITIAL GREETING
+    // -------------------------
     greeting();
 });
