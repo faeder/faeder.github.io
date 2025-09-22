@@ -142,13 +142,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // -------------------------
-    // INPUT HANDLER
+    // INPUT HANDLER + HISTORY
     // -------------------------
+    const history = [];
+    let historyIndex = -1;
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const raw = input.value;
         const cmd = raw.trim().toLowerCase();
         print("> " + raw);
+
+        if (raw.length > 0) {
+            history.push(raw);
+            historyIndex = history.length; // reset pointer to end
+        }
 
         if (cmd in commands) {
             commands[cmd]();
@@ -156,6 +164,25 @@ document.addEventListener('DOMContentLoaded', () => {
             invalidCommand(raw);
         }
         input.value = "";
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowUp") {
+            if (historyIndex > 0) {
+                historyIndex--;
+                input.value = history[historyIndex];
+            }
+            e.preventDefault();
+        } else if (e.key === "ArrowDown") {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                input.value = history[historyIndex];
+            } else {
+                historyIndex = history.length;
+                input.value = "";
+            }
+            e.preventDefault();
+        }
     });
 
     // -------------------------
